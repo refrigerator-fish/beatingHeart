@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>跳动的心</title>
+    <style>
+        #canvasHeart {
+            height: 300px;
+            animation: heart .6s linear infinite;
+        }
+
+        #canvasHeart2 {
+            height: 300px;
+            animation: heart .6s linear infinite;
+        }
+
+        @keyframes heart {
+            0% {
+                transform-origin: 50% 50%;
+                transform: scale(1.1);
+            }
+
+            80% {
+                transform: scale(1.0);
+            }
+
+            100% {
+                transform: scale(1.1);
+            }
+        }
+
+        @keyframes stable {
+
+            /* 本想设置爱心碎片静止不动，并通过js来设置爱心跳动时碎片重新生成，奈何能力不够，只能先留个坑 */
+            0% {}
+
+            100% {}
+        }
+
+        .all {
+            position: relative;
+        }
+
+        .piece {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="all">
+        <div>
+            <canvas id="canvasHeart"></canvas>
+        </div>
+        <div class="piece">
+            <canvas id="canvasHeart2"></canvas>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var rad;
+        var radianDecrement;
+        var num = 360; //一圈360°
+        var piece = []
+        window.onload = function () {
+            var c = document.getElementById("canvasHeart")
+            var ctx = c.getContext("2d");
+            ctx.strokeStyle = "rgb(242, 136, 163)";
+            rad = Math.PI;
+            radianDecrement = Math.PI / num * 2; //1°的弧度值
+            ctx.beginPath(); //主要的爱心部分
+            ctx.moveTo(getX(rad), getY(rad));
+            for (var i = 0; i < num; i++) {
+                rad += radianDecrement;
+                ctx.lineTo(getX(rad), getY(rad));
+                piece.push(getX(rad), getY(rad))//爱心碎片位于主要的爱心附近
+            }
+            ctx.stroke(); //主要的爱心完成
+            var c2 = document.getElementById("canvasHeart2")
+            var ctx2 = c2.getContext("2d");
+            ctx2.strokeStyle = "rgb(242, 136, 163)";
+            ctx2.beginPath(); //随机的爱心碎片
+            for (i = 0; i < piece.length; i = i + 2) {
+                var x = Math.ceil(Math.random() * 30 - 15 + piece[i])
+                var y = Math.ceil(Math.random() * 30 - 15 + piece[i + 1])
+                ctx2.moveTo(x, y)
+                ctx2.lineTo(x + 1, y + 1)
+            }
+            ctx2.stroke(); //随机的爱心碎片完成
+        }
+
+
+        function getX(t) {
+            //x=16sin^3(t),150为偏移量,4为爱心大小的倍数
+            return 150 + 4 * (16 * Math.pow(Math.sin(t), 3));
+        }
+        function getY(t) {
+            //y=13cost-5cos2t-2cos3t-cos4t，70为偏移量,4为爱心大小的倍数
+            return 70 - 4 * (13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+        }
+    </script>
+</body>
+
+</html>
